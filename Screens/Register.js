@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import React, { useState } from 'react';
 import { moderateScale, verticalScale, scale } from 'react-native-size-matters';
@@ -15,15 +16,25 @@ const Register = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const onRegister = () => {
+    if (!email || !password) {
+      Alert.alert('Please fill all fields.');
+      return;
+    }
+
+    setLoading(true);
+
     auth()
       .createUserWithEmailAndPassword(email, password)
       .then(() => {
-        Alert.alert('User account created successfully');
-        navigation.navigate('Login'); // use screen name as string
+        setLoading(false);
+        Alert.alert('Success', 'User account created successfully');
+        navigation.navigate('Login');
       })
       .catch(error => {
+        setLoading(false);
         if (error.code === 'auth/email-already-in-use') {
           Alert.alert('This email is already registered. Please log in.');
         } else if (error.code === 'auth/invalid-email') {
@@ -44,7 +55,7 @@ const Register = () => {
         style={styles.input}
         placeholder="Email"
         value={email}
-        onChangeText={value => setEmail(value)}
+        onChangeText={setEmail}
         autoCapitalize="none"
         keyboardType="email-address"
       />
@@ -53,12 +64,29 @@ const Register = () => {
         style={styles.input}
         placeholder="Password"
         value={password}
-        onChangeText={value => setPassword(value)}
+        onChangeText={setPassword}
         secureTextEntry
       />
 
-      <TouchableOpacity style={styles.registerButton} onPress={onRegister}>
-        <Text style={styles.registerButtonText}>Sign Up</Text>
+      {loading && (
+        <ActivityIndicator
+          size="large"
+          color="#ff0050"
+          style={{ marginVertical: verticalScale(10) }}
+        />
+      )}
+
+      <TouchableOpacity
+        style={[
+          styles.registerButton,
+          loading ? { backgroundColor: '#ccc' } : {},
+        ]}
+        onPress={onRegister}
+        disabled={loading}
+      >
+        <Text style={styles.registerButtonText}>
+          {loading ? 'Registering...' : 'Register'}
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity

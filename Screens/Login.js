@@ -58,6 +58,7 @@ const Login = () => {
       <TextInput
         style={styles.input}
         placeholder="Email"
+        placeholderTextColor="black"
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
@@ -67,6 +68,7 @@ const Login = () => {
       <TextInput
         style={styles.input}
         placeholder="Password"
+        placeholderTextColor="black"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -75,13 +77,14 @@ const Login = () => {
       <TouchableOpacity style={styles.loginButton} onPress={onLogin}>
         <Text style={styles.loginButtonText}>Login</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.linkContainer}
-      onPress={() => navigation.navigate('Register')}>
+      <TouchableOpacity
+        style={styles.linkContainer}
+        onPress={() => navigation.navigate('Register')}
+      >
         <Text style={styles.linkText}>
           Don’t have an account? <Text style={styles.link}>Register</Text>
         </Text>
       </TouchableOpacity>
-      
     </View>
   );
 };

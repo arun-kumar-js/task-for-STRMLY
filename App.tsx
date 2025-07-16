@@ -50,7 +50,7 @@ const TabNavigator = () => (
       headerShown: false,
     })}
   >
-    <Tab.Screen name="Home" component={Home} />
+    <Tab.Screen name="MainTabs" component={Home} />
     <Tab.Screen
       name="Discover"
       children={() => <DummyScreen title="Discover" />}

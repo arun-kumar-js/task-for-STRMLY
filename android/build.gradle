@@ -1,26 +1,33 @@
 buildscript {
     ext {
+        // Updated versions for better compatibility
         buildToolsVersion = "35.0.0"
-        minSdkVersion = 24
-        compileSdkVersion = 35
-        targetSdkVersion = 35
-        ndkVersion = "27.1.12297006"
-        kotlinVersion = "2.1.20"
+        minSdkVersion = 24       // Android 7.0 (Nougat)
+        compileSdkVersion = 35    // Android 14
+        targetSdkVersion = 35     // Android 14
+        ndkVersion = "27.1.12297006"  // LTS NDK version
+        kotlinVersion = "2.1.20"  // Matching React Native's Kotlin requirement
     }
     repositories {
         google()
         mavenCentral()
+        // Add if using other repos
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:8.4.0")
+        classpath("com.android.tools.build:gradle:8.4.0")  // Stable AGP version
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        classpath("com.google.gms:google-services:4.4.3") 
+        classpath("com.google.gms:google-services:4.4.3")  // Firebase
+        
+        // Add if using other plugins:
+        // classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.9")
     }
 }
 
+// Root project plugin must be at bottom
 plugins {
-    id "com.facebook.react.rootproject"
+    id "com.facebook.react.rootproject" apply false
 }
 
+// Apply Google Services plugin only if Firebase is used
 apply plugin: 'com.google.gms.google-services'

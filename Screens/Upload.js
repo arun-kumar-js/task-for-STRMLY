@@ -8,7 +8,7 @@ const Upload = () => {
       <Text style={styles.message}>Dear Team,</Text>
       <Text style={styles.message}>
         I initially planned to use Firebase Storage for media uploads. However,
-        it now requires a paid subscription (around $300), which exceeds the
+        it now requires a paid subscription , which exceeds the
         free tier and is currently not feasible.
       </Text>
       <Text style={styles.message}>

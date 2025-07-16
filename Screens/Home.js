@@ -14,14 +14,8 @@ import { moderateScale, verticalScale, scale } from 'react-native-size-matters';
 
 const { height } = Dimensions.get('window');
 
+// Local video assets
 const videos = [
-  require('../assets/demo1.mp4'),
-  require('../assets/demo2.mp4'),
-  require('../assets/demo3.mp4'),
-  require('../assets/demo4.mp4'),
-  require('../assets/demo5.mp4'),
-  require('../assets/demo6.mp4'),
-  require('../assets/demo7.mp4'),
   require('../assets/demo1.mp4'),
   require('../assets/demo2.mp4'),
   require('../assets/demo3.mp4'),
@@ -34,45 +28,46 @@ const videos = [
 const Home = () => {
   const isFocused = useIsFocused();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [paused, setPaused] = useState({});
+  const [pausedIndex, setPausedIndex] = useState(null); // just one paused index
   const [liked, setLiked] = useState({});
   const [muted, setMuted] = useState({});
 
+  const viewConfig = { itemVisiblePercentThreshold: 80 };
+
   const onViewChange = useRef(({ viewableItems }) => {
     if (viewableItems.length > 0) {
-      setCurrentIndex(viewableItems[0].index);
+      const index = viewableItems[0].index;
+      setCurrentIndex(index);
+      setPausedIndex(null); // Resume when new video comes in view
     }
   }).current;
 
-  const viewConfig = { itemVisiblePercentThreshold: 80 };
-
   const handleLike = index => {
     setLiked(prev => ({ ...prev, [index]: !prev[index] }));
-    setPaused(prev => ({ ...prev, [index]: true }));
   };
 
   const handleMute = index => {
     setMuted(prev => ({ ...prev, [index]: !prev[index] }));
-    setPaused(prev => ({ ...prev, [index]: true }));
   };
 
-  const handleResume = index => {
-    setPaused(prev => ({ ...prev, [index]: false }));
+  const handlePlayPause = index => {
+    setPausedIndex(prev => (prev === index ? null : index));
   };
 
   const renderItem = ({ item, index }) => (
-    <TouchableWithoutFeedback onPress={() => handleResume(index)}>
+    <TouchableWithoutFeedback onPress={() => handlePlayPause(index)}>
       <View style={styles.videoContainer}>
         <Video
-          source={{ uri: item }}
+          source={item}
           style={styles.video}
           resizeMode="cover"
           repeat
+          paused={!isFocused || index !== currentIndex || pausedIndex === index}
           muted={!!muted[index]}
-          paused={!isFocused || index !== currentIndex || !!paused[index]}
         />
+
         <TouchableOpacity
-          style={styles.likeBtn}
+          style={styles.iconButtonLike}
           onPress={() => handleLike(index)}
         >
           <Icon
@@ -81,8 +76,9 @@ const Home = () => {
             color={liked[index] ? 'red' : 'white'}
           />
         </TouchableOpacity>
+
         <TouchableOpacity
-          style={styles.muteBtn}
+          style={styles.iconButtonMute}
           onPress={() => handleMute(index)}
         >
           <Icon
@@ -101,27 +97,32 @@ const Home = () => {
       renderItem={renderItem}
       keyExtractor={(_, i) => i.toString()}
       pagingEnabled
-      horizontal={false}
+      snapToInterval={height}
+      decelerationRate="fast"
       showsVerticalScrollIndicator={false}
       onViewableItemsChanged={onViewChange}
       viewabilityConfig={viewConfig}
-      initialNumToRender={1}
-      maxToRenderPerBatch={1}
-      windowSize={1} 
+      initialNumToRender={3}
+      maxToRenderPerBatch={5}
+      windowSize={5}
+      removeClippedSubviews
     />
   );
 };
 
 const styles = StyleSheet.create({
   videoContainer: {
-    height,
+    height: verticalScale(650),
     backgroundColor: 'black',
+    marginBottom: verticalScale(28),
+    borderRadius: moderateScale(10),
+    overflow: 'hidden',
   },
   video: {
     width: '100%',
     height: '100%',
   },
-  likeBtn: {
+  iconButtonLike: {
     position: 'absolute',
     right: scale(20),
     top: height / 2 - verticalScale(40),
@@ -129,10 +130,10 @@ const styles = StyleSheet.create({
     padding: moderateScale(10),
     borderRadius: moderateScale(30),
   },
-  muteBtn: {
+  iconButtonMute: {
     position: 'absolute',
     right: scale(25),
-    top: height / 2 - verticalScale(-15),
+    top: height / 2 + verticalScale(20),
     backgroundColor: '#00000066',
     padding: moderateScale(10),
     borderRadius: moderateScale(30),
@@ -140,4 +141,3 @@ const styles = StyleSheet.create({
 });
 
 export default Home;
-

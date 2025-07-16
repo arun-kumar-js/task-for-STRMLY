@@ -91,9 +91,6 @@ const Profile = () => {
         phoneNumber: phone.trim() || null,
       };
 
-     
-
-      // Update local data
       const updatedUser = { ...userData, ...updates };
       await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
       setUserData(updatedUser);
@@ -109,7 +106,6 @@ const Profile = () => {
   };
 
   const handleResendVerification = () => {
-    // Implement email verification resend logic here
     Alert.alert('Check your email', 'Verification email has been resent');
   };
 
